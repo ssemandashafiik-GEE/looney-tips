@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Looney Tips</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .league {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .match {
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .tip {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+
+    .confidence {
+      font-weight: bold;
+      color: #22c55e;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<h1>⚽ Looney Tips</h1>
+
+<div class="container" id="predictions"></div>
+
+<div class="footer">
+  Auto-updated every 30 minutes
+</div>
+
+<script>
+async function loadPredictions() {
+  const res = await fetch("/api/predictions");
+  const data = await res.json();
+
+  const container = document.getElementById("predictions");
+  container.innerHTML = "";
+
+  data.slice(0, 50).forEach(match => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="league">${match.league}</div>
+      <div class="match">${match.home} vs ${match.away}</div>
+      <div class="tip">Tip: ${match.tip}</div>
+      <div class="confidence">Confidence: ${match.confidence}%</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+loadPredictions();
+setInterval(loadPredictions, 300000);
+</script>
+
+</body>
+</html>
